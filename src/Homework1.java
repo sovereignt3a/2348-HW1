@@ -1,11 +1,14 @@
 import java.util.Scanner;
+import java.text.DecimalFormat;
 
 public class Homework1 {
     public static void main(String[] args) {
         Scanner scnr = new Scanner(System.in);
+        DecimalFormat dfix = new DecimalFormat("0.00");
         int firstMenuInput;
         int shoppingMenuInput;
-        double transactionTotal = 0;
+        double userBudget = 100.00;
+        double transactionTotal = 0.00;
         int ITEM_NUM = 5;
         final double[] ITEM_PRICES = new double[ITEM_NUM];
         ITEM_PRICES[0] = 19.99;
@@ -21,7 +24,6 @@ public class Homework1 {
         ITEM_NAMES[4] = "Kettle";
 
         boolean transactionComplete = false;
-
         while (!transactionComplete) {
 
             System.out.println("Please select a menu item from the list below: ");
@@ -36,7 +38,6 @@ public class Homework1 {
             }
 
             /* Item menu */
-            boolean exitInput = false;
             while (firstMenuInput == 1) {
                 System.out.println("What would you like to add to your order?");
                 for (int i = 0; i <= ITEM_NUM; i++) {
@@ -56,11 +57,27 @@ public class Homework1 {
                 if (shoppingMenuInput <= ITEM_NUM && shoppingMenuInput >= 1) {
                         System.out.println("You have added a "+ ITEM_NAMES[shoppingMenuInput-1] +" to your order.");
                         transactionTotal += ITEM_PRICES[shoppingMenuInput-1];
-                        System.out.println(transactionTotal);
+                        System.out.println(dfix.format(transactionTotal));
                 }
                 else if (shoppingMenuInput == ITEM_NUM+1)
                     break;
 
+            }
+
+            if (firstMenuInput == 2){
+                if (transactionTotal > userBudget) {
+                    System.out.println("Insufficient funds!");
+                    transactionComplete = true;
+                }
+
+                else
+                    System.out.println("Your total due is: $"+ transactionTotal);
+
+            }
+
+            if (firstMenuInput == 4){
+                transactionTotal = 0.00;
+                System.out.printf("Current order balance has been cleared. Current due: $"+ dfix.format(transactionTotal) +"\n");
             }
         }
     }
