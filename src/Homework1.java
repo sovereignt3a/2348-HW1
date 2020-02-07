@@ -69,14 +69,16 @@ public class Homework1 {
                     System.out.println("Insufficient funds!");
                     transactionComplete = true;
                 }
-
                 else
                     System.out.println("Your total due is: $"+ transactionTotal);
+            }
 
+            if (firstMenuInput == 3){
+                
             }
 
             if (firstMenuInput == 4){
-                transactionTotal = 0.00;
+                transactionTotal = 0;
                 System.out.printf("Current order balance has been cleared. Current due: $"+ dfix.format(transactionTotal) +"\n");
             }
         }
