@@ -1,86 +1,101 @@
 import java.util.Scanner;
-import java.text.DecimalFormat;
 
 public class Homework1 {
     public static void main(String[] args) {
-        Scanner scnr = new Scanner(System.in);
-        DecimalFormat dfix = new DecimalFormat("0.00");
-        int firstMenuInput;
-        int shoppingMenuInput;
-        double userBudget = 100.00;
-        double transactionTotal = 0.00;
-        int ITEM_NUM = 5;
-        final double[] ITEM_PRICES = new double[ITEM_NUM];
+        Scanner scan = new Scanner(System.in);
+        int mainMenuInput, itemMenuInput;
+        double userBudget = 100.00, totalBeforeTax = 0.00, totalAfterTax;
+        final int NUM_ITEMS = 5;
+        final double[] ITEM_PRICES = new double[NUM_ITEMS];
         ITEM_PRICES[0] = 19.99;
         ITEM_PRICES[1] = 29.49;
         ITEM_PRICES[2] = 15.79;
         ITEM_PRICES[3] = 24.99;
         ITEM_PRICES[4] = 24.99;
-        final String[] ITEM_NAMES = new String[ITEM_NUM];
+        final String[] ITEM_NAMES = new String[NUM_ITEMS];
         ITEM_NAMES[0] = "Toaster";
-        ITEM_NAMES[1] = "Coffee Maker";
-        ITEM_NAMES[2] = "Waffle Maker";
+        ITEM_NAMES[1] = "Coffee maker";
+        ITEM_NAMES[2] = "Waffle maker";
         ITEM_NAMES[3] = "Blender";
         ITEM_NAMES[4] = "Kettle";
-
         boolean transactionComplete = false;
+
+        //Main Menu
         while (!transactionComplete) {
+            System.out.println("Please select a menu item from the list below:");
+            System.out.println("1 – View item menu\n2 – Pay total due\n3 – Add $5 in credit\n4 – Clear order");
+            mainMenuInput = scan.nextInt();
 
-            System.out.println("Please select a menu item from the list below: ");
-            System.out.println("1 - View item menu \n2 - Pay total due \n3 - Add $5 in credit \n4 - Clear order \n");
-
-            firstMenuInput = scnr.nextInt();
-
-            /* Checks if the first input is valid */
-            while (firstMenuInput > 4 || firstMenuInput < 1) {
+            while (mainMenuInput > 4 || mainMenuInput < 1) { //Ensures valid input
                 System.out.println("Please enter a valid option!");
-                firstMenuInput = scnr.nextInt();
+                mainMenuInput = scan.nextInt();
             }
 
-            /* Item menu */
-            while (firstMenuInput == 1) {
+            //Menu Option 1: View item menu
+            while (mainMenuInput == 1) {
                 System.out.println("What would you like to add to your order?");
-                for (int i = 0; i <= ITEM_NUM; i++) {
-                    int tempItemNum = i+1;
-                    if (i < ITEM_NUM)
-                        System.out.println("("+ tempItemNum +") "+ ITEM_NAMES[i] + ": $" + ITEM_PRICES[i]);
+                for (int i = 0; i <= NUM_ITEMS; i++) { //This loop will display all item names and prices from the respective arrays
+                    int itemNum = i+1; //Increments i by 1 to represent menu option numbers
+                    if (i < NUM_ITEMS)
+                        System.out.println("("+ itemNum +") "+ ITEM_NAMES[i] + ": $" + ITEM_PRICES[i]);
                     else
-                        System.out.println("("+ tempItemNum +") Go to the main menu");
+                        System.out.println("("+ itemNum +") Go to the main menu");
+                }
+                System.out.printf("Your current total is: $%.2f%n", totalBeforeTax);
+                itemMenuInput = scan.nextInt();
+
+                if (itemMenuInput <= NUM_ITEMS && itemMenuInput >= 1) {
+                        System.out.println("You have added a "+ ITEM_NAMES[itemMenuInput-1] +" to your order.");
+                        totalBeforeTax += ITEM_PRICES[itemMenuInput-1];
                 }
 
-                shoppingMenuInput = scnr.nextInt();
-                while (shoppingMenuInput > ITEM_NUM+1 || shoppingMenuInput < 1) {
-                    System.out.println("Please enter a valid option!");
-                    shoppingMenuInput = scnr.nextInt();
-                }
-
-                if (shoppingMenuInput <= ITEM_NUM && shoppingMenuInput >= 1) {
-                        System.out.println("You have added a "+ ITEM_NAMES[shoppingMenuInput-1] +" to your order.");
-                        transactionTotal += ITEM_PRICES[shoppingMenuInput-1];
-                        System.out.println(dfix.format(transactionTotal));
-                }
-                else if (shoppingMenuInput == ITEM_NUM+1)
+                else if (itemMenuInput == NUM_ITEMS+1) //"NUM_ITEMS+1" represents the "Go to main menu" option, which will always display after the last element in an array of "NUM_ITEMS" elements
                     break;
 
-            }
-
-            if (firstMenuInput == 2){
-                if (transactionTotal > userBudget) {
-                    System.out.println("Insufficient funds!");
-                    transactionComplete = true;
-                }
                 else
-                    System.out.println("Your total due is: $"+ transactionTotal);
-            }
+                    System.out.println("Invalid item number please try again");
+            } //End Menu Option 1
 
-            if (firstMenuInput == 3){
-                
-            }
+            //Menu Option 2: Pay total due
+            if (mainMenuInput == 2) {
+                double discountAmount = 0;
+                boolean discountApplied = false;
+                totalAfterTax = totalBeforeTax;
 
-            if (firstMenuInput == 4){
-                transactionTotal = 0;
-                System.out.printf("Current order balance has been cleared. Current due: $"+ dfix.format(transactionTotal) +"\n");
-            }
-        }
+                if (totalBeforeTax > 50) { //If the total is above $50, a 20% discount is applied
+                    discountAmount = totalBeforeTax * 0.20;
+                    discountApplied = true;
+                    totalAfterTax *= 0.80;
+
+                }
+                totalAfterTax += (totalAfterTax * 0.085); //8.5% tax rate
+
+                if (totalAfterTax > userBudget) { //Program will exit here if this condition is true
+                    System.out.println("Insufficient funds!");
+                    break;
+                }
+
+                System.out.printf("Your total due is: $%.2f%n", totalBeforeTax);
+                System.out.print("Thank you! ");
+                if (discountApplied)
+                    System.out.printf("You saved: $%.2f", discountAmount);
+                System.out.printf(" Your change is: $%.2f%n", (userBudget - totalAfterTax));
+                System.out.println("Your items will be on their way soon!");
+
+                transactionComplete = true;
+            } //End Menu Option 2
+
+            //Menu Option 3: Add $5 in credit
+            if (mainMenuInput == 3) {
+                userBudget += 5.00;
+                System.out.printf("Credit available: $%.1f%n", userBudget);
+            } //End Menu Option 3
+
+            //Menu Option 4: Clear order
+            if (mainMenuInput == 4) {
+                totalBeforeTax = 0.0;
+                System.out.printf("Current order balance has been cleared. Current due: $%.2f%n", totalBeforeTax);
+            } //End Menu Option 4
+        } //End Main Menu
     }
 }
